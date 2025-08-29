@@ -37,6 +37,7 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
   const [editingCell, setEditingCell] = useState<{ row: number; col: number } | null>(null)
   const [isResizing, setIsResizing] = useState(false)
   const [contextMenu, setContextMenu] = useState<{ columnIndex: number; x: number; y: number } | null>(null)
+  const columnRefs = useRef<{ [key: number]: () => void }>({})
   
   const tableRef = useRef<HTMLDivElement>(null)
   const resizingRef = useRef<{ columnIndex: number; startX: number; startWidth: number } | null>(null)
@@ -219,9 +220,19 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
     setContextMenu(null)
   }
 
+  const startRenameColumn = (columnIndex: number) => {
+    const renameFunc = columnRefs.current[columnIndex]
+    if (renameFunc) {
+      renameFunc()
+    }
+    setContextMenu(null)
+  }
+
   // Close context menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => setContextMenu(null)
+    const handleClickOutside = () => {
+      setContextMenu(null)
+    }
     document.addEventListener('click', handleClickOutside)
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
@@ -254,11 +265,11 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg">
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+    <div className="h-full flex flex-col bg-white">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            Data Table ({data.rows.length} rows)
+            {data.rows.length} rows
           </h2>
           {selectedRows.size > 0 && (
             <span className="text-sm text-gray-600">
@@ -282,16 +293,10 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
           >
             {selectedRows.size > 0 ? `Export Selected (${selectedRows.size})` : 'Export All'}
           </button>
-          <button
-            onClick={onReset}
-            className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm"
-          >
-            New Upload
-          </button>
         </div>
       </div>
 
-      <div ref={tableRef} className="overflow-auto max-h-96">
+      <div ref={tableRef} className="flex-1 overflow-auto">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -322,6 +327,9 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
                       onResize={(e) => handleMouseDown(e, index)}
                       onHeaderChange={(value) => handleHeaderChange(index, value)}
                       onClick={(e) => handleColumnClick(e, index)}
+                      onStartRename={(renameFunc) => {
+                        columnRefs.current[index] = renameFunc
+                      }}
                       isResizing={isResizing}
                     />
                   ))}
@@ -432,14 +440,7 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
         >
           <button
             className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700"
-            onClick={() => {
-              // Trigger edit mode for the specific column header
-              const headerElement = document.querySelector(`th[data-column-index="${contextMenu.columnIndex}"]`)
-              if (headerElement) {
-                headerElement.dispatchEvent(new Event('dblclick', { bubbles: true }))
-              }
-              setContextMenu(null)
-            }}
+            onClick={() => startRenameColumn(contextMenu.columnIndex)}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />

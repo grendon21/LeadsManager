@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
@@ -10,6 +10,7 @@ interface SortableColumnProps {
   onResize: (e: React.MouseEvent) => void
   onHeaderChange: (value: string) => void
   onClick?: (e: React.MouseEvent) => void
+  onStartRename?: (renameFunc: () => void) => void
   isResizing?: boolean
 }
 
@@ -21,11 +22,11 @@ export default function SortableColumn({
   onResize, 
   onHeaderChange,
   onClick,
+  onStartRename,
   isResizing = false
 }: SortableColumnProps) {
   const [isEditingHeader, setIsEditingHeader] = useState(false)
   const [tempHeader, setTempHeader] = useState(header)
-
   const {
     attributes,
     listeners,
@@ -45,13 +46,21 @@ export default function SortableColumn({
     minWidth: `${width}px`,
   }
 
-  const handleHeaderDoubleClick = () => {
+  const handleStartRename = () => {
     setIsEditingHeader(true)
     setTempHeader(header)
   }
 
+  // Register the rename function with parent
+  useEffect(() => {
+    if (onStartRename) {
+      onStartRename(handleStartRename)
+    }
+  }, [onStartRename])
+
+
   const handleHeaderSave = () => {
-    onHeaderChange(tempHeader)
+    onHeaderChange(tempHeader.trim() || header)
     setIsEditingHeader(false)
   }
 
@@ -67,6 +76,7 @@ export default function SortableColumn({
       handleHeaderCancel()
     }
   }
+
 
   return (
     <th
@@ -84,7 +94,6 @@ export default function SortableColumn({
           <div
             className="cursor-pointer hover:bg-gray-200 rounded px-1 py-1 flex-1"
             onClick={onClick}
-            onDoubleClick={handleHeaderDoubleClick}
           >
             {isEditingHeader ? (
               <input
