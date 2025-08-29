@@ -4,7 +4,9 @@ interface EditableCellProps {
   value: string
   width: number
   isEditing: boolean
+  isSelected?: boolean
   onEdit: () => void
+  onClick?: () => void
   onSave: (value: string) => void
   onCancel: () => void
 }
@@ -13,7 +15,9 @@ export default function EditableCell({
   value,
   width,
   isEditing,
+  isSelected = false,
   onEdit,
+  onClick,
   onSave,
   onCancel,
 }: EditableCellProps) {
@@ -57,6 +61,7 @@ export default function EditableCell({
     <td
       style={style}
       className="px-4 py-2 text-sm text-gray-900 border-r border-b border-gray-200"
+      onClick={onClick}
       onDoubleClick={onEdit}
     >
       {isEditing ? (

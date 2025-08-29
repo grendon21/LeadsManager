@@ -27,15 +27,22 @@ interface DataTableProps {
   data: TableData
   onDataChange: (data: TableData) => void
   onReset: () => void
+  onSelectedRowsChange?: (selectedRows: Set<number>) => void
 }
 
-export default function DataTable({ data, onDataChange }: DataTableProps) {
+export default function DataTable({ data, onDataChange, onSelectedRowsChange }: DataTableProps) {
 
   const [columnWidths, setColumnWidths] = useState<number[]>(
     new Array(data.headers.length).fill(150)
   )
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
+
+  // Notify parent of selected rows changes
+  useEffect(() => {
+    onSelectedRowsChange?.(selectedRows)
+  }, [selectedRows, onSelectedRowsChange])
   const [editingCell, setEditingCell] = useState<{ row: number; col: number } | null>(null)
+  const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null)
   const [isResizing, setIsResizing] = useState(false)
   const [contextMenu, setContextMenu] = useState<{ columnIndex: number; x: number; y: number } | null>(null)
   const [sortConfig, setSortConfig] = useState<{ columnIndex: number; direction: 'asc' | 'desc' } | null>(null)
@@ -49,6 +56,12 @@ export default function DataTable({ data, onDataChange }: DataTableProps) {
     setSelectedRows(new Set())
     setEditingCell(null)
   }, [data.headers.length])
+
+  // Clear selection when data changes (like after deletion)
+  useEffect(() => {
+    setSelectedRows(new Set())
+    setSelectedCell(null)
+  }, [data])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -113,6 +126,10 @@ export default function DataTable({ data, onDataChange }: DataTableProps) {
     newRows[rowIndex] = [...newRows[rowIndex]]
     newRows[rowIndex][colIndex] = value
     onDataChange({ headers: data.headers, rows: newRows })
+  }
+
+  const handleCellClick = (rowIndex: number, colIndex: number) => {
+    setSelectedCell({ row: rowIndex, col: colIndex })
   }
 
   const handleHeaderChange = (colIndex: number, value: string) => {
@@ -348,7 +365,7 @@ export default function DataTable({ data, onDataChange }: DataTableProps) {
                     ))}
                   </SortableContext>
                   <th 
-                    className="sticky top-0 z-30 bg-gray-50 px-3 py-3 text-left text-sm font-normal text-gray-900 border-r border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-gray-600 transition-colors whitespace-nowrap"
+                    className="bg-gray-50 px-3 py-3 text-left text-sm font-normal text-gray-900 border-r border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-gray-600 transition-colors whitespace-nowrap"
                     onClick={addColumn}
                     style={{ minWidth: '110px', width: '110px' }}
                   >
@@ -365,7 +382,7 @@ export default function DataTable({ data, onDataChange }: DataTableProps) {
               {data.rows.map((row, rowIndex) => (
                 <tr
                   key={rowIndex}
-                  className={`border-b border-gray-300 hover:bg-gray-50 ${
+                  className={`border-b border-gray-300 ${
                     selectedRows.has(rowIndex) ? 'bg-blue-50' : ''
                   }`}
                 >
@@ -388,7 +405,9 @@ export default function DataTable({ data, onDataChange }: DataTableProps) {
                       value={cell}
                       width={columnWidths[colIndex]}
                       isEditing={editingCell?.row === rowIndex && editingCell?.col === colIndex}
+                      isSelected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
                       onEdit={() => setEditingCell({ row: rowIndex, col: colIndex })}
+                      onClick={() => handleCellClick(rowIndex, colIndex)}
                       onSave={(value) => {
                         handleCellChange(rowIndex, colIndex, value)
                         setEditingCell(null)
