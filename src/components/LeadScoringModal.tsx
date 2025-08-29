@@ -41,6 +41,7 @@ export default function LeadScoringModal({ isOpen, onClose, data, onSave, onData
   const [savedScores, setSavedScores] = useState<SavedScore[]>([])
   const [scoreName, setScoreName] = useState<string>('')
   const [showSaveDialog, setShowSaveDialog] = useState<boolean>(false)
+  const [currentScoreName, setCurrentScoreName] = useState<string>('')
 
   // Initialize weights when modal opens - start with no columns included
   useEffect(() => {
@@ -50,6 +51,7 @@ export default function LeadScoringModal({ isOpen, onClose, data, onSave, onData
       setExpandedColumn('')
       setScoreName('')
       setShowSaveDialog(false)
+      setCurrentScoreName('')
       // Load saved scores from localStorage
       const saved = localStorage.getItem('leadsmanager_saved_scores')
       if (saved) {
@@ -128,6 +130,7 @@ export default function LeadScoringModal({ isOpen, onClose, data, onSave, onData
     const updatedScores = [...savedScores, newScore]
     setSavedScores(updatedScores)
     localStorage.setItem('leadsmanager_saved_scores', JSON.stringify(updatedScores))
+    setCurrentScoreName(newScore.name) // Set as current score after saving
     setScoreName('')
     setShowSaveDialog(false)
   }
@@ -136,6 +139,7 @@ export default function LeadScoringModal({ isOpen, onClose, data, onSave, onData
     setWeights(score.weights)
     setSubcategoryWeights(score.subcategoryWeights)
     setIncludedColumns(score.includedColumns)
+    setCurrentScoreName(score.name)
   }
 
   const handleDeleteScore = (scoreId: string) => {
@@ -170,7 +174,9 @@ export default function LeadScoringModal({ isOpen, onClose, data, onSave, onData
   const handleApplyScoreToData = () => {
     if (!onDataChange || !isValidWeight) return
 
-    const scoreColumnName = 'Lead Score'
+    const scoreColumnName = currentScoreName 
+      ? `Lead Score (${currentScoreName})` 
+      : 'Lead Score'
     
     // Check if Lead Score column already exists
     let newHeaders = [...data.headers]
@@ -570,12 +576,13 @@ export default function LeadScoringModal({ isOpen, onClose, data, onSave, onData
             {onDataChange && (
               <button
                 onClick={handleApplyScoreToData}
-                disabled={!isValidWeight}
+                disabled={!isValidWeight || !currentScoreName}
                 className={`px-4 py-2 rounded-md font-medium ${
-                  isValidWeight
+                  isValidWeight && currentScoreName
                     ? 'bg-purple-600 text-white hover:bg-purple-700'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
+                title={!currentScoreName ? 'Save the scoring configuration first to apply it' : ''}
               >
                 Apply to Data
               </button>
