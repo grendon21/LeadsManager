@@ -37,6 +37,7 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
   const [editingCell, setEditingCell] = useState<{ row: number; col: number } | null>(null)
   const [isResizing, setIsResizing] = useState(false)
   const [contextMenu, setContextMenu] = useState<{ columnIndex: number; x: number; y: number } | null>(null)
+  const [sortConfig, setSortConfig] = useState<{ columnIndex: number; direction: 'asc' | 'desc' } | null>(null)
   const columnRefs = useRef<{ [key: number]: () => void }>({})
   
   const tableRef = useRef<HTMLDivElement>(null)
@@ -228,6 +229,42 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
     setContextMenu(null)
   }
 
+  const isNumericColumn = (columnIndex: number) => {
+    // Check if most values in the column are numeric
+    const values = data.rows.map(row => row[columnIndex]).filter(val => val && val.trim())
+    if (values.length === 0) return false
+    
+    const numericValues = values.filter(val => !isNaN(Number(val)) && !isNaN(parseFloat(val)))
+    return numericValues.length > values.length * 0.7 // 70% threshold
+  }
+
+  const sortColumn = (columnIndex: number, direction: 'asc' | 'desc') => {
+    const isNumeric = isNumericColumn(columnIndex)
+    
+    const sortedRows = [...data.rows].sort((a, b) => {
+      const aValue = a[columnIndex] || ''
+      const bValue = b[columnIndex] || ''
+      
+      if (isNumeric) {
+        const aNum = parseFloat(aValue) || 0
+        const bNum = parseFloat(bValue) || 0
+        return direction === 'asc' ? aNum - bNum : bNum - aNum
+      } else {
+        const aStr = aValue.toString().toLowerCase()
+        const bStr = bValue.toString().toLowerCase()
+        if (direction === 'asc') {
+          return aStr < bStr ? -1 : aStr > bStr ? 1 : 0
+        } else {
+          return aStr > bStr ? -1 : aStr < bStr ? 1 : 0
+        }
+      }
+    })
+
+    setSortConfig({ columnIndex, direction })
+    onDataChange({ headers: data.headers, rows: sortedRows })
+    setContextMenu(null)
+  }
+
   // Close context menu when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
@@ -303,6 +340,7 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
                           columnRefs.current[index] = renameFunc
                         }}
                         isResizing={isResizing}
+                        sortConfig={sortConfig?.columnIndex === index ? sortConfig : null}
                       />
                     ))}
                   </SortableContext>
@@ -439,6 +477,28 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
             Insert 1 column right
+          </button>
+          
+          <hr className="my-2 border-gray-200" />
+          
+          <button
+            className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700"
+            onClick={() => sortColumn(contextMenu.columnIndex, 'asc')}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
+            {isNumericColumn(contextMenu.columnIndex) ? 'Sort 0 → 9' : 'Sort A → Z'}
+          </button>
+          
+          <button
+            className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700"
+            onClick={() => sortColumn(contextMenu.columnIndex, 'desc')}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8V20m0 0l4-4m-4 4l-4-4M7 4v12m0 0l4-4m-4 4L3 12" />
+            </svg>
+            {isNumericColumn(contextMenu.columnIndex) ? 'Sort 9 → 0' : 'Sort Z → A'}
           </button>
           
           <hr className="my-2 border-gray-200" />

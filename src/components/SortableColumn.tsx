@@ -12,6 +12,7 @@ interface SortableColumnProps {
   onClick?: (e: React.MouseEvent) => void
   onStartRename?: (renameFunc: () => void) => void
   isResizing?: boolean
+  sortConfig?: { columnIndex: number; direction: 'asc' | 'desc' } | null
 }
 
 export default function SortableColumn({ 
@@ -23,7 +24,8 @@ export default function SortableColumn({
   onHeaderChange,
   onClick,
   onStartRename,
-  isResizing = false
+  isResizing = false,
+  sortConfig = null
 }: SortableColumnProps) {
   const [isEditingHeader, setIsEditingHeader] = useState(false)
   const [tempHeader, setTempHeader] = useState(header)
@@ -106,9 +108,24 @@ export default function SortableColumn({
                 autoFocus
               />
             ) : (
-              <span className="truncate block" title={header}>
-                {header}
-              </span>
+              <div className="flex items-center gap-2 w-full">
+                <span className="truncate block" title={header}>
+                  {header}
+                </span>
+                {sortConfig && (
+                  <div className="flex-shrink-0">
+                    {sortConfig.direction === 'asc' ? (
+                      <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      </svg>
+                    ) : (
+                      <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    )}
+                  </div>
+                )}
+              </div>
             )}
           </div>
           {/* Separate drag handle */}

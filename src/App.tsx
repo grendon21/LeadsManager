@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
+import Papa from 'papaparse'
 import CSVUploader from './components/CSVUploader'
 import DataTable from './components/DataTable'
 import SheetTab from './components/SheetTab'
+import ActionsDropdown from './components/ActionsDropdown'
+import LeadScoringModal from './components/LeadScoringModal'
 
 interface TableData {
   headers: string[]
@@ -20,6 +23,7 @@ function App() {
   const [sheets, setSheets] = useState<Sheet[]>([])
   const [activeSheetId, setActiveSheetId] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
+  const [isLeadScoringModalOpen, setIsLeadScoringModalOpen] = useState(false)
 
   // Load sheets from localStorage on mount
   useEffect(() => {
@@ -122,6 +126,36 @@ function App() {
     }
   }
 
+  const handleExportAll = () => {
+    if (!currentSheet?.data) return
+    
+    const csvContent = Papa.unparse({
+      fields: currentSheet.data.headers,
+      data: currentSheet.data.rows
+    })
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    
+    link.setAttribute('href', url)
+    link.setAttribute('download', `${currentSheet.name}-export.csv`)
+    link.style.visibility = 'hidden'
+    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const handleConfigureLeadScoring = () => {
+    setIsLeadScoringModalOpen(true)
+  }
+
+  const handleLeadScoringSave = (weights: { [key: string]: number }) => {
+    // TODO: Save lead scoring configuration and proceed to subcategory weights
+    console.log('Lead scoring weights saved:', weights)
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -171,9 +205,10 @@ function App() {
                   </h2>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
-                    Export All
-                  </button>
+                  <ActionsDropdown 
+                    onExportAll={handleExportAll}
+                    onConfigureLeadScoring={handleConfigureLeadScoring}
+                  />
                 </div>
               </div>
             </div>
@@ -215,6 +250,15 @@ function App() {
           Add
         </button>
       </div>
+
+      {/* Lead Scoring Modal */}
+      <LeadScoringModal
+        isOpen={isLeadScoringModalOpen}
+        onClose={() => setIsLeadScoringModalOpen(false)}
+        data={currentSheet?.data || { headers: [], rows: [] }}
+        onSave={handleLeadScoringSave}
+        onDataChange={handleDataChange}
+      />
     </div>
   )
 }
