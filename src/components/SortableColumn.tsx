@@ -13,6 +13,7 @@ interface SortableColumnProps {
   onStartRename?: (renameFunc: () => void) => void
   isResizing?: boolean
   sortConfig?: { columnIndex: number; direction: 'asc' | 'desc' } | null
+  headerClassName?: string
 }
 
 export default function SortableColumn({ 
@@ -25,7 +26,8 @@ export default function SortableColumn({
   onClick,
   onStartRename,
   isResizing = false,
-  sortConfig = null
+  sortConfig = null,
+  headerClassName = ''
 }: SortableColumnProps) {
   const [isEditingHeader, setIsEditingHeader] = useState(false)
   const [tempHeader, setTempHeader] = useState(header)
@@ -82,15 +84,21 @@ export default function SortableColumn({
 
   return (
     <th
-      ref={setNodeRef}
+      className={`relative px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 ${headerClassName}`}
       style={style}
-      className={`relative px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 bg-gray-50 ${
-        isDragging ? 'opacity-50' : ''
-      }`}
       data-column-index={columnIndex}
-      {...attributes}
     >
-      <div className="flex items-center justify-between h-full">
+      {/* Inner wrapper for drag transforms - keeps sticky positioning intact */}
+      <div
+        ref={setNodeRef}
+        style={{
+          transform: CSS.Transform.toString(transform),
+          transition,
+          opacity: isDragging ? 0.5 : 1
+        }}
+        {...attributes}
+        className="flex items-center justify-between h-full"
+      >
         <div className="flex-1 flex items-center">
           {/* Click area for menu */}
           <div

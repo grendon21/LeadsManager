@@ -29,7 +29,8 @@ interface DataTableProps {
   onReset: () => void
 }
 
-export default function DataTable({ data, onDataChange, onReset }: DataTableProps) {
+export default function DataTable({ data, onDataChange }: DataTableProps) {
+
   const [columnWidths, setColumnWidths] = useState<number[]>(
     new Array(data.headers.length).fill(150)
   )
@@ -41,7 +42,6 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
   const columnRefs = useRef<{ [key: number]: () => void }>({})
   
   const tableRef = useRef<HTMLDivElement>(null)
-  const resizingRef = useRef<{ columnIndex: number; startX: number; startWidth: number } | null>(null)
 
   // Reset column widths when new data is loaded
   useEffect(() => {
@@ -265,6 +265,7 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
     setContextMenu(null)
   }
 
+
   // Close context menu when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
@@ -301,20 +302,21 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
     document.body.removeChild(link)
   }
 
+
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Table with sticky header */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <div ref={tableRef} className="h-full overflow-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 sticky top-0 z-30 shadow-lg shadow-gray-200/50">
+          <div ref={tableRef} className="overflow-auto" style={{ height: 'calc(100vh - 180px)' }}>
+            <table className="w-full border-separate border-spacing-0">
+              <thead className="bg-gray-50 shadow-lg shadow-gray-200/50">
                 <tr>
-                  <th className="w-20 px-4 py-3 border-r border-gray-200 bg-gray-50 sticky left-0 z-40 shadow-lg shadow-gray-200/50">
+                  <th className="sticky top-0 left-0 z-40 bg-gray-50 w-20 px-4 py-3 border-r border-gray-200 shadow-lg shadow-gray-200/50">
                     <div className="flex items-center justify-between">
                       <input
                         type="checkbox"
@@ -341,11 +343,12 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
                         }}
                         isResizing={isResizing}
                         sortConfig={sortConfig?.columnIndex === index ? sortConfig : null}
+                        headerClassName="sticky top-0 z-30 bg-gray-50"
                       />
                     ))}
                   </SortableContext>
                   <th 
-                    className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider border-r border-gray-200 bg-gray-50 cursor-pointer hover:bg-gray-100 hover:text-gray-600 transition-colors whitespace-nowrap"
+                    className="sticky top-0 z-30 bg-gray-50 px-3 py-3 text-left text-sm font-normal text-gray-900 border-r border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-gray-600 transition-colors whitespace-nowrap"
                     onClick={addColumn}
                     style={{ minWidth: '110px', width: '110px' }}
                   >
@@ -353,7 +356,7 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                       </svg>
-                      <span className="text-xs">Add Column</span>
+                      <span className="text-sm">Add Column</span>
                     </div>
                   </th>
                 </tr>
@@ -362,7 +365,7 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
               {data.rows.map((row, rowIndex) => (
                 <tr
                   key={rowIndex}
-                  className={`border-b border-gray-100 hover:bg-gray-50 ${
+                  className={`border-b border-gray-300 hover:bg-gray-50 ${
                     selectedRows.has(rowIndex) ? 'bg-blue-50' : ''
                   }`}
                 >
@@ -399,19 +402,12 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
                 </tr>
               ))}
               <tr 
-                className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer bg-gray-50/30"
+                className="border-b border-gray-300 hover:bg-gray-50 cursor-pointer bg-white"
                 onClick={addRow}
               >
-                <td className="w-20 px-4 py-2 border-r border-gray-200 bg-gray-50 sticky left-0 z-10 shadow-lg shadow-gray-200/50">
-                  <div className="flex items-center justify-center">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                  </div>
-                </td>
                 <td 
-                  className="px-4 py-2 text-sm text-gray-400 border-r border-gray-200"
-                  style={{ width: `${columnWidths[0]}px`, minWidth: `${columnWidths[0]}px` }}
+                  className="px-4 py-2 text-sm text-gray-900 bg-white"
+                  colSpan={data.headers.length + 2}
                 >
                   <div className="flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -420,23 +416,13 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
                     New row
                   </div>
                 </td>
-                {data.headers.slice(1).map((_, colIndex) => (
-                  <td 
-                    key={colIndex + 1}
-                    className="px-4 py-2 text-sm text-gray-300 border-r border-gray-200"
-                    style={{ width: `${columnWidths[colIndex + 1]}px`, minWidth: `${columnWidths[colIndex + 1]}px` }}
-                  >
-                  </td>
-                ))}
-                <td className="px-3 py-2 text-sm text-gray-300 border-r border-gray-200 bg-gray-50/50" style={{ minWidth: '110px', width: '110px' }}>
-                  {/* Empty cell for Add Column */}
-                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </DndContext>
     </div>
+
 
       {/* Context Menu */}
       {contextMenu && (
