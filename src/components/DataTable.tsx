@@ -266,89 +266,61 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
 
   return (
     <div className="h-full flex flex-col bg-white">
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
-        <div className="flex items-center gap-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {data.rows.length} rows
-          </h2>
-          {selectedRows.size > 0 && (
-            <span className="text-sm text-gray-600">
-              {selectedRows.size} selected
-            </span>
-          )}
-        </div>
-        
-        <div className="flex items-center gap-2">
-          {selectedRows.size > 0 && (
-            <button
-              onClick={deleteSelectedRows}
-              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
-            >
-              Delete Selected
-            </button>
-          )}
-          <button
-            onClick={exportToCSV}
-            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
-          >
-            {selectedRows.size > 0 ? `Export Selected (${selectedRows.size})` : 'Export All'}
-          </button>
-        </div>
-      </div>
-
-      <div ref={tableRef} className="flex-1 overflow-auto relative">
+      {/* Table with sticky header */}
+      <div className="flex-1 overflow-hidden">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <table className="w-full min-h-full">
-            <thead className="bg-gray-50 sticky top-0 z-30 shadow-lg shadow-gray-200/50">
-              <tr>
-                <th className="w-20 px-4 py-3 border-r border-gray-200 bg-gray-50 sticky left-0 z-40 shadow-lg shadow-gray-200/50">
-                  <div className="flex items-center justify-between">
-                    <input
-                      type="checkbox"
-                      checked={selectedRows.size === data.rows.length && data.rows.length > 0}
-                      onChange={selectAllRows}
-                      className="rounded border-gray-300"
-                    />
-                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">#</span>
-                  </div>
-                </th>
-                <SortableContext items={data.headers} strategy={horizontalListSortingStrategy}>
-                  {data.headers.map((header, index) => (
-                    <SortableColumn
-                      key={`column-${index}-${header}`}
-                      id={header}
-                      header={header}
-                      width={columnWidths[index]}
-                      columnIndex={index}
-                      onResize={(e) => handleMouseDown(e, index)}
-                      onHeaderChange={(value) => handleHeaderChange(index, value)}
-                      onClick={(e) => handleColumnClick(e, index)}
-                      onStartRename={(renameFunc) => {
-                        columnRefs.current[index] = renameFunc
-                      }}
-                      isResizing={isResizing}
-                    />
-                  ))}
-                </SortableContext>
-                <th 
-                  className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider border-r border-gray-200 bg-gray-50 cursor-pointer hover:bg-gray-100 hover:text-gray-600 transition-colors whitespace-nowrap"
-                  onClick={addColumn}
-                  style={{ minWidth: '110px', width: '110px' }}
-                >
-                  <div className="flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    <span className="text-xs">Add Column</span>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+          <div ref={tableRef} className="h-full overflow-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 sticky top-0 z-30 shadow-lg shadow-gray-200/50">
+                <tr>
+                  <th className="w-20 px-4 py-3 border-r border-gray-200 bg-gray-50 sticky left-0 z-40 shadow-lg shadow-gray-200/50">
+                    <div className="flex items-center justify-between">
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.size === data.rows.length && data.rows.length > 0}
+                        onChange={selectAllRows}
+                        className="rounded border-gray-300"
+                      />
+                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">#</span>
+                    </div>
+                  </th>
+                  <SortableContext items={data.headers} strategy={horizontalListSortingStrategy}>
+                    {data.headers.map((header, index) => (
+                      <SortableColumn
+                        key={`column-${index}-${header}`}
+                        id={header}
+                        header={header}
+                        width={columnWidths[index]}
+                        columnIndex={index}
+                        onResize={(e) => handleMouseDown(e, index)}
+                        onHeaderChange={(value) => handleHeaderChange(index, value)}
+                        onClick={(e) => handleColumnClick(e, index)}
+                        onStartRename={(renameFunc) => {
+                          columnRefs.current[index] = renameFunc
+                        }}
+                        isResizing={isResizing}
+                      />
+                    ))}
+                  </SortableContext>
+                  <th 
+                    className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider border-r border-gray-200 bg-gray-50 cursor-pointer hover:bg-gray-100 hover:text-gray-600 transition-colors whitespace-nowrap"
+                    onClick={addColumn}
+                    style={{ minWidth: '110px', width: '110px' }}
+                  >
+                    <div className="flex items-center gap-1">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      <span className="text-xs">Add Column</span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
               {data.rows.map((row, rowIndex) => (
                 <tr
                   key={rowIndex}
@@ -424,8 +396,9 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
               </tr>
             </tbody>
           </table>
-        </DndContext>
-      </div>
+        </div>
+      </DndContext>
+    </div>
 
       {/* Context Menu */}
       {contextMenu && (

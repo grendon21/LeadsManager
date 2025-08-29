@@ -145,21 +145,40 @@ function App() {
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">LeadsManager</h1>
-                <p className="text-sm text-gray-600">
-                  CSV data management
-                  <span className="text-green-600 ml-2">• Data auto-saved</span>
-                </p>
+            {/* Fixed header section - always visible */}
+            <div className="flex-shrink-0 bg-white sticky top-0 z-50">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">LeadsManager</h1>
+                  <p className="text-sm text-gray-600">
+                    CSV data management
+                    <span className="text-green-600 ml-2">• Data auto-saved</span>
+                  </p>
+                </div>
+                <button
+                  onClick={handleReset}
+                  className="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm"
+                >
+                  New Upload
+                </button>
               </div>
-              <button
-                onClick={handleReset}
-                className="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm"
-              >
-                New Upload
-              </button>
+              
+              {/* Controls bar - also sticky */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    {currentSheet.data?.rows.length || 0} rows
+                  </h2>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                    Export All
+                  </button>
+                </div>
+              </div>
             </div>
+            
+            {/* Scrollable content area */}
             <div className="flex-1 overflow-hidden">
               <DataTable 
                 data={currentSheet.data}
