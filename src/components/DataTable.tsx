@@ -296,13 +296,13 @@ export default function DataTable({ data, onDataChange, onReset }: DataTableProp
         </div>
       </div>
 
-      <div ref={tableRef} className="flex-1 overflow-auto">
+      <div ref={tableRef} className="flex-1 overflow-auto relative">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <table className="w-full">
+          <table className="w-full min-h-full">
             <thead className="bg-gray-50 sticky top-0 z-30 shadow-lg shadow-gray-200/50">
               <tr>
                 <th className="w-20 px-4 py-3 border-r border-gray-200 bg-gray-50 sticky left-0 z-40 shadow-lg shadow-gray-200/50">
