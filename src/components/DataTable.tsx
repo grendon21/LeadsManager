@@ -332,9 +332,9 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
         >
           <div ref={tableRef} className="overflow-auto" style={{ height: 'calc(100vh - 180px)' }}>
             <table className="w-full border-separate border-spacing-0">
-              <thead className="bg-gray-50 shadow-lg shadow-gray-200/50">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th className="sticky top-0 left-0 z-40 bg-gray-50 w-20 px-4 py-3 border-r border-gray-200 shadow-lg shadow-gray-200/50">
+                  <th className="sticky top-0 left-0 z-40 bg-gray-50 w-20 px-4 py-3 border-r border-gray-200">
                     <div className="flex items-center justify-between">
                       <input
                         type="checkbox"
@@ -387,7 +387,7 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
                     selectedRows.has(rowIndex) ? 'bg-blue-50' : ''
                   }`}
                 >
-                  <td className="w-20 px-4 py-2 border-r border-gray-200 bg-gray-50 sticky left-0 z-10 shadow-lg shadow-gray-200/50">
+                  <td className="w-20 px-4 py-2 border-r border-gray-200 bg-gray-50 sticky left-0 z-10">
                     <div className="flex items-center justify-between">
                       <input
                         type="checkbox"

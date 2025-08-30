@@ -227,8 +227,7 @@ function App() {
           <div className="flex-1 flex items-center justify-center">
             <div className="max-w-2xl w-full px-4">
               <div className="mb-8 text-center">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">LeadsManager</h1>
-                <p className="text-gray-600">Upload and manage your CSV data with ease</p>
+                <img src="/images/KEYlogo.png" alt="Key Logo" className="h-64 w-auto mb-4" />
               </div>
               <CSVUploader onDataLoad={handleDataChange} />
             </div>
@@ -237,31 +236,31 @@ function App() {
           <>
             {/* Fixed header section - always visible */}
             <div className="flex-shrink-0 bg-white sticky top-0 z-50">
-              <div className="px-4 py-3 border-b border-gray-200">
-                <div>
-                  <h1 className="text-xl font-bold text-gray-900">LeadsManager</h1>
-                  <p className="text-sm text-gray-600">
-                    CSV data management
-                  </p>
-                </div>
+              <div className="px-4 py-1 border-b border-gray-200 flex items-center gap-3 bg-gray-100">
+                <img src="/images/KEYlogo.png" alt="Key Logo" className="h-16 w-auto -my-2" />
+                <div className="h-6 w-0.5 bg-gray-300"></div>
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Lead Manager</span>
               </div>
               
               {/* Controls bar - also sticky */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white">
                 <div className="flex items-center gap-4">
-                  <h2 className="text-lg font-semibold text-gray-900">
+                  <span className="text-sm text-gray-900">
                     {currentSheet.data?.rows.length || 0} rows
-                  </h2>
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   {selectedRows.size > 0 ? (
                     <>
                       <span className="text-sm text-gray-600 mr-2">
-                        {selectedRows.size} row{selectedRows.size !== 1 ? 's' : ''} selected
+                        {selectedRows.size}/{currentSheet.data?.rows.length || 0} rows selected
                       </span>
                       <button
                         onClick={handleExportSelectedRows}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 text-white rounded text-sm font-medium transition-colors"
+                        style={{ backgroundColor: '#00bfff' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(194, 100%, 45%)'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#00bfff'}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

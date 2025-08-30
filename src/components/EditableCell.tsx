@@ -59,7 +59,7 @@ export default function EditableCell({
     <td
       style={style}
       className="px-4 py-2 text-sm text-gray-900 border-r border-b border-gray-200"
-      onClick={onClick}
+      onDoubleClick={onClick}
     >
       {isEditing ? (
         <input
@@ -72,7 +72,7 @@ export default function EditableCell({
           className="w-full bg-white border border-blue-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       ) : (
-        <div className="truncate cursor-pointer hover:bg-gray-100 rounded px-1 py-1" title={value}>
+        <div className="truncate cursor-pointer rounded px-1 py-1" title={value} style={{ ':hover': { backgroundColor: '#e6f9ff' } }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e6f9ff'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
           {value || '\u00A0'}
         </div>
       )}

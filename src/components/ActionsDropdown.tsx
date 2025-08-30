@@ -46,7 +46,10 @@ export default function ActionsDropdown({ onExportAll, onConfigureLeadScoring, o
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-md hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors"
+        className="flex items-center gap-2 px-3 py-1.5 text-white rounded-md text-sm font-medium transition-colors"
+        style={{ backgroundColor: '#00bfff' }}
+        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'hsl(194, 100%, 45%)'}
+        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#00bfff'}
       >
         Actions
         <svg 
