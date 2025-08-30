@@ -84,7 +84,7 @@ export default function SortableColumn({
 
   return (
     <th
-      className={`relative px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 ${headerClassName}`}
+      className={`relative px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-b border-gray-200 ${headerClassName}`}
       style={style}
       data-column-index={columnIndex}
     >

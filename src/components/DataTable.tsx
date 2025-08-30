@@ -332,17 +332,16 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
         >
           <div ref={tableRef} className="overflow-auto" style={{ height: 'calc(100vh - 180px)' }}>
             <table className="w-full border-separate border-spacing-0">
-              <thead className="bg-gray-50">
+              <thead className="bg-white">
                 <tr>
-                  <th className="sticky top-0 left-0 z-40 bg-gray-50 w-20 px-4 py-3 border-r border-gray-200">
-                    <div className="flex items-center justify-between">
+                  <th className="sticky top-0 left-0 z-40 bg-white px-4 py-3 border-r border-b border-gray-200" style={{ width: '120px', minWidth: '120px' }}>
+                    <div className="flex items-center justify-start gap-2">
                       <input
                         type="checkbox"
                         checked={selectedRows.size === data.rows.length && data.rows.length > 0}
                         onChange={selectAllRows}
                         className="rounded border-gray-300"
                       />
-                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">#</span>
                     </div>
                   </th>
                   <SortableContext items={data.headers} strategy={horizontalListSortingStrategy}>
@@ -361,7 +360,7 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
                         }}
                         isResizing={isResizing}
                         sortConfig={sortConfig?.columnIndex === index ? sortConfig : null}
-                        headerClassName="sticky top-0 z-30 bg-gray-50"
+                        headerClassName="sticky top-0 z-30 bg-white"
                       />
                     ))}
                   </SortableContext>
@@ -387,8 +386,8 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
                     selectedRows.has(rowIndex) ? 'bg-blue-50' : ''
                   }`}
                 >
-                  <td className="w-20 px-4 py-2 border-r border-gray-200 bg-gray-50 sticky left-0 z-10">
-                    <div className="flex items-center justify-between">
+                  <td className="px-4 py-2 border-r border-b border-gray-200 bg-white sticky left-0 z-10" style={{ width: '120px', minWidth: '120px' }}>
+                    <div className="flex items-center justify-start gap-2">
                       <input
                         type="checkbox"
                         checked={selectedRows.has(rowIndex)}
