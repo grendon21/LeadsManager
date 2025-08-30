@@ -57,8 +57,8 @@ export default function EditableCell({
 
   return (
     <td
+      className="px-4 py-1 text-sm text-gray-900 border-r border-b border-gray-200"
       style={style}
-      className="px-4 py-2 text-sm text-gray-900 border-r border-b border-gray-200"
       onDoubleClick={onClick}
     >
       {isEditing ? (

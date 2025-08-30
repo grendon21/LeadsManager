@@ -336,7 +336,7 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
             <table className="w-full border-separate border-spacing-0">
               <thead className="bg-white">
                 <tr>
-                  <th className="sticky top-0 left-0 z-40 bg-white px-4 py-3 border-r border-b border-gray-200" style={{ width: '120px', minWidth: '120px' }}>
+                  <th className="sticky top-0 left-0 z-40 bg-white px-4 py-1 border-r border-b border-gray-200" style={{ width: '120px', minWidth: '120px' }}>
                     <div className="flex items-center justify-start gap-2">
                       <input
                         type="checkbox"
@@ -388,7 +388,7 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
                     selectedRows.has(rowIndex) ? 'bg-blue-50' : ''
                   }`}
                 >
-                  <td className={`px-4 py-2 border-r border-b border-gray-200 sticky left-0 z-10 ${selectedCell?.row === rowIndex && selectedCell?.col === -1 ? 'bg-blue-50' : 'bg-white'}`} style={{ width: '120px', minWidth: '120px' }}>
+                  <td className={`px-4 py-1 border-r border-b border-gray-200 sticky left-0 z-10 ${selectedCell?.row === rowIndex && selectedCell?.col === -1 ? 'bg-blue-50' : 'bg-white'}`} style={{ width: '120px', minWidth: '120px' }}>
                     <div className="flex items-center justify-start gap-2">
                       <input
                         type="checkbox"
