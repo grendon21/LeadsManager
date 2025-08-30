@@ -130,6 +130,7 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
 
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     setSelectedCell({ row: rowIndex, col: colIndex })
+    setEditingCell({ row: rowIndex, col: colIndex })
   }
 
   const handleHeaderChange = (colIndex: number, value: string) => {
@@ -406,7 +407,6 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
                       width={columnWidths[colIndex]}
                       isEditing={editingCell?.row === rowIndex && editingCell?.col === colIndex}
                       isSelected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
-                      onEdit={() => setEditingCell({ row: rowIndex, col: colIndex })}
                       onClick={() => handleCellClick(rowIndex, colIndex)}
                       onSave={(value) => {
                         handleCellChange(rowIndex, colIndex, value)

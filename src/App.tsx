@@ -242,7 +242,6 @@ function App() {
                   <h1 className="text-xl font-bold text-gray-900">LeadsManager</h1>
                   <p className="text-sm text-gray-600">
                     CSV data management
-                    <span className="text-green-600 ml-2">• Data auto-saved</span>
                   </p>
                 </div>
               </div>
