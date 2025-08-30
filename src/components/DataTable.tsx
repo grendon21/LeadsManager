@@ -144,8 +144,10 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
       const newSelected = new Set(prev)
       if (newSelected.has(rowIndex)) {
         newSelected.delete(rowIndex)
+        setSelectedCell(null)
       } else {
         newSelected.add(rowIndex)
+        setSelectedCell({ row: rowIndex, col: -1 })
       }
       return newSelected
     })
@@ -324,13 +326,13 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Table with sticky header */}
-      <div className="flex-1">
+      <div className="flex-1 overflow-hidden">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <div ref={tableRef} className="overflow-auto" style={{ height: 'calc(100vh - 140px)' }}>
+          <div ref={tableRef} className="overflow-auto" style={{ height: 'calc(100vh - 160px)' }}>
             <table className="w-full border-separate border-spacing-0">
               <thead className="bg-white">
                 <tr>
@@ -386,7 +388,7 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
                     selectedRows.has(rowIndex) ? 'bg-blue-50' : ''
                   }`}
                 >
-                  <td className="px-4 py-2 border-r border-b border-gray-200 bg-white sticky left-0 z-10" style={{ width: '120px', minWidth: '120px' }}>
+                  <td className={`px-4 py-2 border-r border-b border-gray-200 sticky left-0 z-10 ${selectedCell?.row === rowIndex && selectedCell?.col === -1 ? 'bg-blue-50' : 'bg-white'}`} style={{ width: '120px', minWidth: '120px' }}>
                     <div className="flex items-center justify-start gap-2">
                       <input
                         type="checkbox"
@@ -438,9 +440,9 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
             </tbody>
           </table>
         </div>
+        
       </DndContext>
-    </div>
-
+      </div>
 
       {/* Context Menu */}
       {contextMenu && (

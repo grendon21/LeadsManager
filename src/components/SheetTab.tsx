@@ -80,11 +80,6 @@ export default function SheetTab({ sheet, isActive, onClick, onRename, onDelete,
         </span>
       )}
       
-      {/* Data indicator */}
-      {sheet.data && (
-        <div className="w-1.5 h-1.5 bg-green-500 rounded-full ml-2 flex-shrink-0" title="Has data" />
-      )}
-      
       {/* Delete button (only shows on hover and if deletable) */}
       {canDelete && !isEditing && (
         <button
