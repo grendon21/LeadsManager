@@ -71,18 +71,18 @@ export default function SheetTab({ sheet, isActive, onClick, onRename, onDelete,
           onChange={(e) => setTempName(e.target.value)}
           onBlur={handleSave}
           onKeyDown={handleKeyDown}
-          className="bg-white border border-gray-300 rounded px-2 py-0.5 text-sm w-20 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="bg-white border border-gray-300 rounded px-2 py-0.5 text-sm min-w-20 max-w-48 focus:outline-none focus:ring-1 focus:ring-blue-500"
           autoFocus
         />
       ) : (
-        <span className="truncate max-w-20" title={sheet.name}>
+        <span className="max-w-48" title={sheet.name}>
           {sheet.name}
         </span>
       )}
       
       {/* Data indicator */}
       {sheet.data && (
-        <div className="w-1.5 h-1.5 bg-green-500 rounded-full ml-1 flex-shrink-0" title="Has data" />
+        <div className="w-1.5 h-1.5 bg-green-500 rounded-full ml-2 flex-shrink-0" title="Has data" />
       )}
       
       {/* Delete button (only shows on hover and if deletable) */}

@@ -330,7 +330,7 @@ export default function DataTable({ data, onDataChange, onSelectedRowsChange }: 
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <div ref={tableRef} className="overflow-auto" style={{ height: 'calc(100vh - 180px)' }}>
+          <div ref={tableRef} className="overflow-auto" style={{ height: 'calc(100vh - 140px)' }}>
             <table className="w-full border-separate border-spacing-0">
               <thead className="bg-white">
                 <tr>

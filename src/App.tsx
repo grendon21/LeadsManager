@@ -222,7 +222,7 @@ function App() {
 
   return (
     <div className="h-screen bg-gray-50 flex flex-col">
-      <div className="flex-1 flex flex-col pb-12"> {/* Add bottom padding for footer */}
+      <div className="flex-1 flex flex-col">
         {!currentSheet?.data ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="max-w-2xl w-full px-4">
